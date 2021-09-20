@@ -1,0 +1,49 @@
+ 
+ .search-icon {
+        margin-left: -31px;
+        background-color: #808080;
+        display: inline-block;
+        line-height: 32px;
+        width: 30px;
+        vertical-align: middle;
+        cursor: pointer;
+ }
+  input {
+    border: 1px solid #999;
+    padding: 0.5rem;
+    width: 350px;
+    vertical-align: middle;
+    line-height: initial;
+  }
+ 
+  .no-suggestions {
+    color: #999;
+    padding: 0.5rem;
+  }
+  
+  .suggestions {
+    border: 1px solid #999;
+    border-top-width: 0;
+    list-style: none;
+    margin-left: 37.1%;
+    max-height: 143px;
+    overflow-y: auto;
+    padding-left: 0;
+    width: 350px;
+  }
+  
+  .suggestions li {
+    padding: 0.5rem;
+  }
+  
+  .suggestion-active,
+  .suggestions li:hover {
+    background-color: blue;
+    color: #fae042;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  .suggestions li:not(:last-of-type) {
+    border-bottom: 1px solid #999;
+  }
