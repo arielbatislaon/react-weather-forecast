@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useMemo, useContext} from 'react'
-import axios from 'axios';
-import debounce from 'lodash.debounce';
+import PropTypes from 'prop-types'
 import AutoSuggest from '../auto-suggest';
 import LoadingSpinner from '../loading-spinner';
 import {CityForecastContext} from '../../App';
-import {WEATHER_APi__SEARCH_CITY_URL, WEATHER_APi__SEARCH_CITY_BY_ID_URL} from '../../config';
+import {WEATHER_APi__SEARCH_CITY_URL, WEATHER_APi__SEARCH_CITY_BY_ID_URL, DISPATCH_ACTION, DEBOUNCE_DELAY} from '../../config';
+import {getAPI, debounceKeyInput} from '../../utils'
 
-function CitySearch() {
+function CitySearch(props) {
+    const {labels} = props;
     const [city, setCity] = useState('');
     const [cityList, setCityList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -14,23 +15,23 @@ function CitySearch() {
     
       const changeHandler = event => {
         setCity(event.target.value);
+        cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.RESET_ERROR});
       }
 
       const debouncedOnChange = useMemo(
-        () => debounce(changeHandler, 100)
+        () => debounceKeyInput(changeHandler, DEBOUNCE_DELAY)
       , []);
-    
-      const selectCity = (woeid, city) =>{
-        if(woeid){
+
+      const selectCity = (city) =>{
+        try{
+          setCityList([]);
+          const woeid = ({...{woeid: null}, ...cityList.find( ({ title }) => title.trim().toLowerCase() === city.trim().toLowerCase() )}).woeid;
+          if(woeid){
           setLoading(true);
-          axios({
-            method: 'get',
-            url: `${WEATHER_APi__SEARCH_CITY_BY_ID_URL}/${woeid}`,
-            headers: {'X-Requested-With':'XMLHttpRequest'}
-        })
+          getAPI(`${WEATHER_APi__SEARCH_CITY_BY_ID_URL}/${woeid}`)
             .then(response => {
                 console.log(response);
-                cityForecastContext.cityIdDispatch({type: 'SET_CITY_FORECAST', payload: {
+                cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.SET_CITY_FORECAST, payload: {
                   city,
                   forecasts: response.data.consolidated_weather
                 } });
@@ -38,19 +39,19 @@ function CitySearch() {
             })
             .catch(error => {
                 console.log(error);
-            })   
+                cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.DISPLAY_ERROR, payload: error });
+            })
+        } else {
+          cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.DISPLAY_ERROR, payload: {message: labels.cityNotFound.replace('{city}', city)}});
+        }} catch(error) {
+          cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.DISPLAY_ERROR, payload: error });
         }
-        console.log('woeid:', woeid);
       }
 
 useEffect(() => {
     if(city) {
         setLoading(true);
-        axios({
-            method: 'get',
-            url: `${WEATHER_APi__SEARCH_CITY_URL}/?query=${city}`,
-            headers: {'X-Requested-With':'XMLHttpRequest'}
-        })
+        getAPI(`${WEATHER_APi__SEARCH_CITY_URL}/?query=${city}`)
             .then(response => {
                 console.log(response);
                 setLoading(false);
@@ -58,7 +59,8 @@ useEffect(() => {
             })
             .catch(error => {
                 console.log(error);
-            })
+                cityForecastContext.cityIdDispatch({type: DISPATCH_ACTION.DISPLAY_ERROR, payload: error });
+              })
     }
 
 }, [city]);
@@ -70,5 +72,17 @@ useEffect(() => {
        </div>
     );
 }
+CitySearch.propTypes = {
+    labels: PropTypes.shape({
+      cityNotFound:  PropTypes.string,
+    }),
+ }
+
+ CitySearch.defaultProps = {
+  forecasts: [],
+       labels: {
+        cityNotFound:  'Unable to find City: {city}',
+  },
+}    
 
 export default CitySearch

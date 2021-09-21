@@ -1,11 +1,9 @@
 import React from 'react';
 import './index.css';
-import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import PropTypes from 'prop-types'
-import dayjs from 'dayjs-ext'
 import {NO_OF_DAYS_FORECAST} from '../../config'
-
+import ForeCastItem from '../forecast-item'
 
 function ForeCastContainer(props) {
   const {forecasts, labels, city} = props;
@@ -14,12 +12,8 @@ function ForeCastContainer(props) {
       {forecasts.length>0 && <h4>{labels.forcastTitle.replace('{city}', city)}</h4>}
       <Row>
       {forecasts.length && forecasts.map( (forecast, index) => 
-       ( index < NO_OF_DAYS_FORECAST && <Col className="forecast-item">
-           <div><h5>{dayjs(forecast.applicable_date).format('dddd')}</h5></div>
-           <div>{labels.minTempText}:{forecast.min_temp}</div>
-           <div> {labels.maxTempText}:{forecast.max_temp}</div>
-       </Col>)
-      )}
+       ( index < NO_OF_DAYS_FORECAST && <ForeCastItem key={index} className="forecast-item"  forecast={forecast}/>
+      ))}
       </Row>
     </div>
   );

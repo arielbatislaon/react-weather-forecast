@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders ForeCastItem correctly  1`] = `
+<div
+  className="col"
+>
+  <div>
+    <h5>
+      Wednesday
+    </h5>
+  </div>
+  <div>
+    Min Temp.
+    :
+  </div>
+  <div>
+     
+    Max Temp.
+    :
+  </div>
+</div>
+`;

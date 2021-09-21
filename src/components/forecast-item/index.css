@@ -1,0 +1,9 @@
+
+.forecast-item{
+    background: blue;
+    color:white;
+    margin-left:5px;
+  }
+  .forecast-item:nth-of-type(even){
+    background: gray;
+  }

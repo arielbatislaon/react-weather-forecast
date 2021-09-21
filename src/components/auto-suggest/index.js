@@ -8,8 +8,6 @@ function AutoSuggest(props) {
 
    const {cityList, onClick, onChange} = props;
    const [suggestedCities, setSuggestedCities] = useState([]);
-   const [cityId, setCityId] = useState(0);
-   
    const cityRef = useRef(null);
    
 useEffect(() => {
@@ -17,15 +15,11 @@ useEffect(() => {
 }, [cityList]);
 
     const listClick = (city, woeid) => {
-        console.log(city);
-        console.log(woeid);
         cityRef.current.value = city;
         setSuggestedCities([]);
-        onClick(woeid, city) ; 
-        setCityId(woeid);
+        onClick(city) ; 
         }
 
-       
         let suggestedCitiesComponent =null;
         if (suggestedCities.length ) {
           suggestedCitiesComponent = (
@@ -54,7 +48,7 @@ useEffect(() => {
                 ref={cityRef}
                 placeholder="City"
               />
-              <div className="search-icon" onClick={() => onClick(cityId, cityRef.current ? cityRef.current.value : '')}>
+              <div className="search-icon" onClick={() => onClick(cityRef.current ? cityRef.current.value : '')}>
               <FontAwesomeIcon  icon={faSearch}/>
               </div>
               {suggestedCitiesComponent}

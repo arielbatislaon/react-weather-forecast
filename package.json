@@ -10,7 +10,6 @@
     "axios": "^0.21.4",
     "bootstrap": "^5.1.0",
     "dayjs-ext": "^2.2.0",
-    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "npm": "^7.24.0",
     "react": "^17.0.0",
